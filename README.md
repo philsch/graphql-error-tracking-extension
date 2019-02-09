@@ -21,7 +21,7 @@ a real bug the corresponding query can be crucial.
 
 ## Usage
 
-* Install the npm package as a dependency
+* Install the npm package as a dependency `npm i graphql-error-tracking-extension --save`
 * Add this extension and the request to the GraphQL context like this:
 
 ```js
