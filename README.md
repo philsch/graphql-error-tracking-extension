@@ -3,9 +3,9 @@ graphql-error-tracking-extension
 
 This GraphQL extension for [Apollo Server 2](https://github.com/apollographql/apollo-server) adds two functionalities:
  
-1. It helps you to log the request context in case of an Exception is happening in your GraphQL API. A trace-id will 
+1. It helps you to **log the request context** in case of an Exception is happening in your GraphQL API. A trace-id will 
 additionally help you to find the corresponding log entries.
-1. You can define for which Exception types you do not want to reveal the error to the client and just return a
+1. You can define for which Exception types you do **not want to reveal the error** to the client and just return a
 generic "internal server error"
 
 Example log using this extension:
@@ -24,7 +24,7 @@ a real bug the corresponding query can be crucial.
 * Install the npm package as a dependency
 * Add this extension and the request to the GraphQL context like this:
 
-```
+```js
 import {ApolloServer} from 'apollo-server-express';
 import {GraphQLErrorTrackingExtension} from 'graphql-error-tracking-extension';
 
@@ -57,7 +57,7 @@ to the client. Also have a look to the already available error types defined by 
 
 **Example** 
 
-```
+```js
 import {ApolloServer, ApolloError, ForbiddenError} from 'apollo-server-express';
 import {GraphQLErrorTrackingExtension} from 'graphql-error-tracking-extension';
 
