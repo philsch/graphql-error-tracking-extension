@@ -31,7 +31,7 @@ describe('GraphQLErrorTrackingExtension', () => {
       expect(maskedHeaders['x-other-header']).toEqual('***');
     });
 
-    it('does not change the oriignal headers object', () => {
+    it('does not change the orignal headers object', () => {
       const extension = new GraphQLErrorTrackingExtension();
       const exampleHeaders = {'authorization': 'secret-token'};
       const maskedHeaders = extension.maskHeader(exampleHeaders);
@@ -50,7 +50,7 @@ describe('GraphQLErrorTrackingExtension', () => {
       console.error.mockRestore();
     });
 
-    it('forwards errors unmodified if no mapping to internal errors is set', () => {
+    it('forwards errors unmodified if revealErrorTypes is not set', () => {
       const extension = new GraphQLErrorTrackingExtension();
       const errors = [
         new SyntaxError('error one'),
@@ -59,11 +59,13 @@ describe('GraphQLErrorTrackingExtension', () => {
 
       const forwardedErrors = extension.handleErrors(errors, {});
       expect(forwardedErrors[0]).toBeInstanceOf(SyntaxError);
+      expect(forwardedErrors[0].message).toEqual('error one');
       expect(forwardedErrors[1]).toBeInstanceOf(SyntaxError);
+      expect(forwardedErrors[1].message).toEqual('error two');
     });
 
-    it('forwards generic errors if mapping to internal errors is set', () => {
-      const config = {mapToInternalError: [SyntaxError]};
+    it('forwards errors unmodified if defined in revealErrorTypes', () => {
+      const config = {revealErrorTypes: [UserInputError]};
       const extension = new GraphQLErrorTrackingExtension(config);
       const errors = [
         new SyntaxError('error one'),
@@ -73,7 +75,27 @@ describe('GraphQLErrorTrackingExtension', () => {
       const forwardedErrors = extension.handleErrors(errors, {});
       expect(forwardedErrors[0]).toBeInstanceOf(Error);
       expect(forwardedErrors[0]).not.toBeInstanceOf(SyntaxError);
+      expect(forwardedErrors[0].message).toEqual('Internal Server Error');
       expect(forwardedErrors[1]).toBeInstanceOf(UserInputError);
+      expect(forwardedErrors[1].message).toEqual('error two');
+    });
+
+    it('modifes all errors if revealErrorTypes is empty array', () => {
+      const config = {revealErrorTypes: []};
+      const extension = new GraphQLErrorTrackingExtension(config);
+      const errors = [
+        new SyntaxError('error one'),
+        new UserInputError('error two'),
+        new Error('error three'),
+      ];
+
+      const forwardedErrors = extension.handleErrors(errors, {});
+      expect(forwardedErrors[0]).toBeInstanceOf(Error);
+      expect(forwardedErrors[0]).not.toBeInstanceOf(SyntaxError);
+      expect(forwardedErrors[1]).toBeInstanceOf(Error);
+      expect(forwardedErrors[1]).not.toBeInstanceOf(UserInputError);
+      expect(forwardedErrors[2]).toBeInstanceOf(Error);
+      expect(forwardedErrors[2].message).toEqual('Internal Server Error');
     });
   });
 });
