@@ -15,7 +15,8 @@ class GraphQLErrorTrackingExtension extends GraphQLExtension {
 
     this.config = {};
     this.config.maskHeaders = Array.isArray(config.maskHeaders) ? config.maskHeaders : ['authorization'];
-    this.config.mapToInternalError = Array.isArray(config.mapToInternalError) ? config.mapToInternalError : [];
+    this.config.revealErrorTypes = Array.isArray(config.revealErrorTypes) ? config.revealErrorTypes : null;
+    this.config.onUnrevealedError = typeof config.onUnrevealedError === "function" ? config.onUnrevealedError : null;
   }
 
   /**
@@ -83,13 +84,23 @@ class GraphQLErrorTrackingExtension extends GraphQLExtension {
       console.error(`[${traceId}] Original error body: ${body}`);
     }
 
-    for (const errorClass of this.config.mapToInternalError) {
-      if (err.originalError instanceof errorClass || err instanceof errorClass) {
-        return new Error('Internal Server Error');
+    if (this.config.revealErrorTypes === null) {
+      return err;
+    }
+
+    if (Array.isArray(this.config.revealErrorTypes)) {
+      for (const errorClass of this.config.revealErrorTypes) {
+        if (err.originalError instanceof errorClass || err instanceof errorClass) {
+          return err;
+        }
       }
     }
 
-    return err;
+    if (this.config.onUnrevealedError) {
+      this.config.onUnrevealedError(err, err.originalError);
+    }
+
+    return new Error('Internal Server Error');
   }
 
   /**
