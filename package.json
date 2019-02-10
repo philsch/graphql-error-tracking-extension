@@ -1,6 +1,6 @@
 {
   "name": "graphql-error-tracking-extension",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "GraphQL server extension to track requests with errors",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
