@@ -2,7 +2,6 @@
 .idea
 
 # Project
-node_modules
+node_modules/
+dist/
 package-lock.json
-dist
-!dist/.gitkeep
