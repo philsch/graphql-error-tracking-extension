@@ -16,6 +16,7 @@ class GraphQLErrorTrackingExtension extends GraphQLExtension {
     this.config = {};
     this.config.maskHeaders = Array.isArray(config.maskHeaders) ? config.maskHeaders : ['authorization'];
     this.config.revealErrorTypes = Array.isArray(config.revealErrorTypes) ? config.revealErrorTypes : null;
+    this.config.onUnrevealedError = typeof config.onUnrevealedError === "function" ? config.onUnrevealedError : null;
   }
 
   /**
@@ -93,6 +94,10 @@ class GraphQLErrorTrackingExtension extends GraphQLExtension {
           return err;
         }
       }
+    }
+
+    if (this.config.onUnrevealedError) {
+      this.config.onUnrevealedError(err, err.originalError);
     }
 
     return new Error('Internal Server Error');
