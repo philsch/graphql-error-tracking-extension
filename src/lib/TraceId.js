@@ -9,7 +9,7 @@ class TraceId {
    * @return {string}
    */
   static generate() {
-    return Math.random().toString(16).slice(2);
+    return Math.random().toString(16).slice(2,8);
   }
 }
 
