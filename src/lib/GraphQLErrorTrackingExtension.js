@@ -1,3 +1,4 @@
+/* eslint-disable-next-line import/no-unresolved */
 import {GraphQLExtension} from "graphql-extensions";
 import {TraceId} from "./TraceId";
 
@@ -57,9 +58,8 @@ class GraphQLErrorTrackingExtension extends GraphQLExtension {
     const traceId = TraceId.generate();
     const maskedHeaders = this.maskHeader(headers);
 
-    return errors.map((error) => {
-      return this.handleError(error, maskedHeaders, traceId)
-    });
+    return errors.map((error) => (this.handleError(error, maskedHeaders, traceId)));
+
   }
 
   /**
@@ -83,7 +83,7 @@ class GraphQLErrorTrackingExtension extends GraphQLExtension {
       console.error(`[${traceId}] Original error body: ${body}`);
     }
 
-    for (let errorClass of this.config.mapToInternalError) {
+    for (const errorClass of this.config.mapToInternalError) {
       if (err.originalError instanceof errorClass || err instanceof errorClass) {
         return new Error('Internal Server Error');
       }

@@ -1,6 +1,9 @@
 graphql-error-tracking-extension
 ================================
 
+[![npm version](http://img.shields.io/npm/v/graphql-error-tracking-extension.svg?style=flat)](https://npmjs.org/package/graphql-error-tracking-extension "View this project on npm")
+[![Build Status](https://travis-ci.org/philsch/graphql-error-tracking-extension.svg?branch=master)](https://travis-ci.org/philsch/graphql-error-tracking-extension)
+
 This GraphQL extension for [Apollo Server 2](https://github.com/apollographql/apollo-server) adds two functionalities:
  
 1. It helps you to **log the request context** in case of an Exception is happening in your GraphQL API. A trace-id will 
@@ -21,6 +24,7 @@ a real bug the corresponding query can be crucial.
 
 ## Usage
 
+* This package needs `graphql-extensions` to be installed: `npm i graphql-extensions --save`
 * Install the npm package as a dependency `npm i graphql-error-tracking-extension --save`
 * Add this extension and the request to the GraphQL context like this:
 
