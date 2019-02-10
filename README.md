@@ -79,3 +79,37 @@ const server = new ApolloServer({
 ```
 
 Important: the array takes the JS classes, not strings!
+
+#### onUnrevealedError
+
+If you have defined `revealErrorTypes`, this callback gets called if an error was mapped to *Internal Server Error*. 
+Whatever you do in this callback, the *Internal Server Error* is send to the client, but you can use it to e.g. forward
+this unexpected error to another monitoring system.
+
+**Default:** `null`
+
+**Example** 
+
+```js
+import {ApolloServer, SyntaxError, UserInputError, AuthenticationError, ForbiddenError} from 'apollo-server-express';
+import {GraphQLErrorTrackingExtension} from 'graphql-error-tracking-extension';
+import {ErrorReporting} from '@google-cloud/error-reporting';
+const errorReporting = new ErrorReporting();
+
+const server = new ApolloServer({
+    schema,
+    extensions: [() => new GraphQLErrorTrackingExtension({
+        revealErrorTypes: [SyntaxError, UserInputError, AuthenticationError, ForbiddenError],
+        onUnrevealedError: (err, originalError) => {
+            if (originalError) {
+                errorReporting.report(err.originalError.stack);
+            } else {
+                errorReporting.report(err.stack);
+            }
+        }
+    })],
+    context: ({req}) => ({
+        request: req
+    })
+});
+```

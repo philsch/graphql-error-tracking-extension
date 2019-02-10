@@ -98,4 +98,20 @@ describe('GraphQLErrorTrackingExtension', () => {
       expect(forwardedErrors[2].message).toEqual('Internal Server Error');
     });
   });
+
+  describe('onUnrevealedError callback', () => {
+    it('calls onUnrevealedError if revealErrorTypes is set and error is not revealed', () => {
+      const callback = jest.fn();
+      const config = {revealErrorTypes: [UserInputError], onUnrevealedError: callback};
+      const extension = new GraphQLErrorTrackingExtension(config);
+      const errors = [
+        new SyntaxError('error one'),
+        new UserInputError('error two'),
+      ];
+
+      extension.handleErrors(errors, {});
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(callback.mock.calls[0][0]).toBeInstanceOf(SyntaxError);
+    })
+  })
 });
